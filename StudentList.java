@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -7,147 +6,122 @@ public class StudentList {
 
     public static void main(String[] args) {
 
-        // check if argument is provided
-        // if (args.length == 0) {
-        //     System.out.println("Please provide a, r, ?, +, or c argument");
-        //     return;
-        // }
+        if (args.length == 0) {
+            System.out.println("Please provide a command: a, r, ?, +, or c");
+            return;
+        }
 
         String command = args[0];
 
-        if (command.equals("a")) {
+        String fileContents = LoadData(Constants.STUDENT_FILE);
 
-        } else if (command.equals("r")) {
-
-        } else if (command.startsWith("+")) {
-
-        } else if (command.startsWith("?")) {
-
-        } else if (command.equals("c")) {
-
-        } else {
-
-            System.out.println("Invalid argument! Use a, r, ?, +, or c");
+        if (command.equals(Constants.SHOW_ALL)) {
+            System.out.println("Loading data ...");
+            try {
+                String[] words = fileContents.split(",");
+                for (String word : words) {
+                    System.out.println(word.trim());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Data Loaded.");
         }
 
-        String fileContents = LoadData("students.txt");
-
-//		Check arguments
-        if (command.equals("a")) {
+        else if (command.equals(Constants.SHOW_RANDOM)) {
             System.out.println("Loading data ...");
-
             try {
-                String words[] = fileContents.split(",");
+                String[] words = fileContents.split(",");
+                Random random = new Random();
+                int word = random.nextInt(words.length);
+                System.out.println(words[word].trim());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Data Loaded.");
+        }
+
+        else if (command.startsWith(Constants.ADD_ENTRY)) {
+            System.out.println("Loading data ...");
+            try {
+                String newStudent = command.substring(1).trim();
+
+                // Remove old "List last updated on ..." if exists
+                String[] parts = fileContents.split("\n");
+                String studentsLine = parts[0].trim(); // first line has all students
+                studentsLine += Constants.STUDENT_DELIMITER + " " + newStudent;
+
+                // Get current date
+                Date date = new Date();
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm:ss a");
+                String formatDate = dateFormat.format(date);
+
+                // Write back to file: students line + single update line
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.STUDENT_FILE))) {
+                    writer.write(studentsLine);
+                    writer.newLine();
+                    writer.write("List last updated on " + formatDate);
+                }
+
+                System.out.println("Data Loaded.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        else if (command.startsWith(Constants.FIND_ENTRY)) {
+            System.out.println("Loading data ...");
+            try {
+                String[] words = fileContents.split(",");
+                String argValue = command.substring(1).trim();
+                boolean found = false;
 
                 for (String word : words) {
-                    System.out.println(word);
-                }
-
-            } catch (Exception e) {
-
-            }
-
-            System.out.println("Data Loaded.");
-
-        } else if (command.equals("r")) {
-
-            System.out.println("Loading data ...");
-
-            try {
-                String words[] = fileContents.split(",");
-
-                Random random = new Random();
-                int word = random.nextInt(0, words.length);
-                System.out.println(words[word]);
-
-            } catch (Exception e) {
-
-            }
-
-            System.out.println("Data Loaded.");
-        } else if (command.contains("+")) {
-
-            System.out.println("Loading data ...");
-
-            try {
-                BufferedWriter fileStream = new BufferedWriter(
-                        new FileWriter("students.txt", true));
-                String argValue = args[0].substring(1);
-                Date date = new Date();
-                String dateFormatObj = "dd/mm/yyyy-hh:mm:ss a";
-                DateFormat dateFormat = new SimpleDateFormat(dateFormatObj);
-                String formatDate = dateFormat.format(date);
-                fileStream.write(", " + argValue + "\nList last updated on " + formatDate);
-                fileStream.close();
-            } catch (Exception e) {
-
-            }
-
-            System.out.println("Data Loaded.");
-
-        } 
-		
-		else if (command.contains("?")) {
-            System.out.println("Loading data ...");
-
-            try {
-                String words[] = fileContents.split(",");
-
-                boolean done = false;
-                String argValue = args[0].substring(1);
-
-                for (int idx = 0; idx < words.length && !done; idx++) {
-
-                    if (words[idx].equals(argValue)) {
+                    if (word.trim().equals(argValue)) {
                         System.out.println("We found it!");
-                        done = true;
+                        found = true;
+                        break;
                     }
                 }
-				if (!done) {
-					System.out.println(argValue + " not found!");
-				}
+
+                if (!found) {
+                    System.out.println(argValue + " not found!");
+                }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
-
             System.out.println("Data Loaded.");
+        }
 
-        } else if (command.contains("c")) {System.out.println("Loading data ...");
+        else if (command.equals(Constants.SHOW_COUNT)) {
+            System.out.println("Loading data ...");
+            try {
+                if (fileContents == null || fileContents.trim().isEmpty()) {
+                    System.out.println("0 word(s) found 0");
+                } else {
+                    String[] words = fileContents.split(",");
+                    System.out.println(words.length + " word(s) found.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Data Loaded.");
+        }
 
-		try {
-			if (fileContents == null || fileContents.trim().isEmpty()) {
-				System.out.println("0 word(s) found 0");
-			} else {
-				// Count words separated by commas
-				String[] words = fileContents.split(",");
-				System.out.println(words.length + " word(s) found." );
-			}
-	
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	
-		System.out.println("Data Loaded.");
-
+        else {
+            System.out.println("Invalid argument! Use a, r, ?, +, or c");
         }
     }
 
     public static String LoadData(String fileName) {
-        BufferedReader fileStream = null;
-        try {
-            fileStream = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream("students.txt")));
+        try (BufferedReader fileStream = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)))) {
+            return fileStream.readLine();
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        String reader = null;
-        try {
-            reader = fileStream.readLine();
+            System.out.println("File not found: " + fileName);
+            return "";
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "";
         }
-        return reader;
     }
-
 }
