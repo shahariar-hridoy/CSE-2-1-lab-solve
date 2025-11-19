@@ -112,7 +112,7 @@ public class StudentList {
 
                 for (int idx = 0; idx < words.length && !done; idx++) {
 
-                    if (words[idx].equals(t)) {
+                    if (words[idx].equals(argValue)) {
                         System.out.println("We found it!");
                         done = true;
                     }
