@@ -5,6 +5,34 @@ import java.util.*;
 
 public class StudentList {
     public static void main(String[] args) {
+		
+		// check if argument is provided
+		if (args.length == 0) {
+			System.out.println("Please provide a, r, ?, +, or c argument");
+			return;
+		}
+	
+		String command = args[0];
+	
+		if (command.equals("a")) {
+			
+		}
+		else if (command.equals("r")) {
+			
+		}
+		else if (command.startsWith("+")) {
+			
+		}
+		else if (command.startsWith("?")) {
+			
+		}
+		else if (command.equals("c")) {
+			
+		}
+		else {
+			
+			System.out.println("Invalid argument! Use a, r, ?, +, or c");
+		}
 
 //		Check arguments
         if (args[0].equals("a")) {
