@@ -93,24 +93,22 @@ public class StudentList {
             System.out.println("Data Loaded.");
         }
 
-        else if (command.equals(Constants.SHOW_COUNT)) {
-            System.out.println("Loading data ...");
-            try {
-                if (fileContents == null || fileContents.trim().isEmpty()) {
-                    System.out.println("0 word(s) found 0");
-                } else {
-                    String[] words = fileContents.split(",");
-                    System.out.println(words.length + " word(s) found.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println("Data Loaded.");
-        }
-
-        else {
+		else if (command.equals(Constants.SHOW_COUNT)) {
+			System.out.println("Loading data ...");
+		
+			// Count words separated by commas, handle empty content
+			int count = (fileContents == null || fileContents.trim().isEmpty()) 
+						? 0 
+						: fileContents.split(",").length;
+		
+			System.out.println(count + " word(s) found.");
+		
+			System.out.println("Data Loaded.");
+		}
+		else {
             System.out.println("Invalid argument! Use a, r, ?, +, or c");
         }
+        
     }
 
     public static String LoadData(String fileName) {
